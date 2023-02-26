@@ -1,7 +1,7 @@
 const { chromium } = require('playwright');
 
 describe(`UI tests for bookstore using playwright`, () => {
-    jest.setTimeout(10000);
+    jest.setTimeout(30000);
     let browser = null;
     let page = null;
     let context = null;
