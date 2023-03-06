@@ -1,4 +1,5 @@
 const { chromium } = require('playwright');
+const {expect} = require('@playwright/test');
 const { faker } = require("@faker-js/faker");
 const {
     BASE_URL,
@@ -17,6 +18,11 @@ describe(`Test`, () => {
         browser = await chromium.launch({headless:false});
         context = await browser.newContext();
         page = await context.newPage();
+    });
+
+    afterAll(async() => {
+        await page.close();
+        return browser.close();
     });
 
     it("should navigate to base URL", async () => {
@@ -42,6 +48,16 @@ describe(`Test`, () => {
         await page.fill("#signUpPassword", VALID_PASSWORD_USER);
         await page.fill("#signUpConfirmPassword", VALID_PASSWORD_USER);
         await page.check('label[for="terms"]');
+
+        // Verify if the appropriate color of borders is displayed
+        const emailInputParent = page.locator('div.textInput', {has: page.locator('#signUpUsername')});
+        await expect(emailInputParent).toHaveClass(/textInput__valid/);
+
+        const passwordInputParent = page.locator('div.textInput', {has: page.locator('#signUpPassword')});
+        await expect(passwordInputParent).toHaveClass(/textInput__valid/);
+
+        const confirmPasswordInputParent = page.locator('div.textInput', {has: page.locator('#signUpConfirmPassword')});
+        await expect(confirmPasswordInputParent).toHaveClass(/textInput__valid/);
 
         // Save
         await page.click("#createAccount_button");
