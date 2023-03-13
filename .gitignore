@@ -4,5 +4,7 @@ node_modules/
 /playwright/.cache/
 /recordings/
 /screenshots/
-/tests/
 /pom/
+.idea/
+.vscode/
+.DS_Store
