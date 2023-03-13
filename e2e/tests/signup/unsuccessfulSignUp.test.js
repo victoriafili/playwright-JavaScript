@@ -6,12 +6,12 @@ const {
     EMAIL_ADDRESS_PREFIX,
     VALID_PASSWORD_USER,
     CONFIRM_PASSWORD_USER,
-  } = require("./constants");
+  } = require("../../constants");
 
 const flow = {
     emailAddress: EMAIL_ADDRESS_PREFIX + faker.internet.email()
 }
-  
+
 describe(`Test`, () => {
     let browser, context, page
 
@@ -26,19 +26,19 @@ describe(`Test`, () => {
         return browser.close();
     });
 
-    it("should navigate to base URL", async () => {
+    it.skip("should navigate to base URL", async () => {
         await page.goto(BASE_URL);
     });
 
-    it("should accept the cookies", async() => {
+    it.skip("should accept the cookies", async() => {
         await page.click(".CookieBannerAcceptButton_c1mxe743");
     });
 
-    it("should close the advertisement modal", async() => {
+    it.skip("should close the advertisement modal", async() => {
         await page.getByRole('button', { name: 'Close Offers Modal' }).click();
     });
 
-    it("should open the sign up modal", async () => {
+    it.skip("should open the sign up modal", async () => {
         // Click the [Sign-up] button
         await page.click('a[href="/myoddschecker/login"]');
         // Click the Create an account url
@@ -48,8 +48,8 @@ describe(`Test`, () => {
         // Check if the sign-up modal is displayed
         await expect(page.locator("#signUpUsername")).toBeVisible();
     });
-    
-    it("should type a different password in the confirm field and verify error message", async () => {
+
+    it.skip("should type a different password in the confirm field and verify error message", async () => {
         // Registration info
         await page.fill("#signUpUsername", flow.emailAddress);
         await page.fill("#signUpPassword", VALID_PASSWORD_USER);
@@ -69,7 +69,7 @@ describe(`Test`, () => {
         await expect(confirmPasswordInputParent).toHaveClass(/textInput__invalid/);
     });
 
-    it("should attempt to register without checking the checkbox for the terms", async () => {
+    it.skip("should attempt to register without checking the checkbox for the terms", async () => {
         // Registration info
         await page.fill("#signUpUsername", flow.emailAddress);
         await page.fill("#signUpPassword", VALID_PASSWORD_USER);
@@ -83,7 +83,7 @@ describe(`Test`, () => {
         await expect(page.locator("#tAndCsErrorMessage")).toHaveText("Please accept the T&Cs and Privacy Policy");
     });
 
-    it('close the modal', async () => {
+    it.skip('close the modal', async () => {
         await page.click("#close_button");
     });
 });

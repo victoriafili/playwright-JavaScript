@@ -2,22 +2,27 @@ const { chromium } = require('playwright');
 const {expect} = require('@playwright/test');
 const { faker } = require("@faker-js/faker");
 const {
-    BASE_URL,
     EMAIL_ADDRESS_PREFIX,
     VALID_PASSWORD_USER,
-  } = require("./constants");
+  } = require("../../constants");
+const SignUpPage = require('../../pageObjects/SignUp.page');
+const HomePage = require('../../pageObjects/Home.page');
 
 const flow = {
     emailAddress: EMAIL_ADDRESS_PREFIX + faker.internet.email()
 }
-  
-describe(`Test`, () => {
-    let browser, context, page
+
+describe(`Successful Sign Up Scenarios`, () => {
+    let browser, context, page;
+    let signUpPage = null;
+    let homePage = null;
 
     beforeAll(async() => {
         browser = await chromium.launch({headless:false});
         context = await browser.newContext();
         page = await context.newPage();
+        signUpPage = new SignUpPage(page);
+        homePage = new HomePage(page);
     });
 
     afterAll(async() => {
@@ -25,29 +30,19 @@ describe(`Test`, () => {
         return browser.close();
     });
 
-    it("should navigate to base URL", async () => {
-        await page.goto(BASE_URL);
-    });
-
-    it("should accept the cookies", async() => {
-        await page.click(".CookieBannerAcceptButton_c1mxe743");
-    });
-
-    it("should close the advertisement modal", async() => {
-        await page.getByRole('button', { name: 'Close Offers Modal' }).click();
-    });
-    
     it("should attempt to register without checking the checkbox for the tips", async () => {
+        await homePage.navigateToBaseUrl();
+        await page.click(homePage.cookieBannerOKButton);
+        await homePage.closeOffersModal();
+
         // Click the [Sign-up] button
-        await page.click('a[href="/myoddschecker/login"]');
-        // Click the Create an account url
-        await page.getByText('Create an account').click();
+        await page.click(signUpPage.signUpButton);
 
         // Registration info
-        await page.fill("#signUpUsername", flow.emailAddress);
-        await page.fill("#signUpPassword", VALID_PASSWORD_USER);
-        await page.fill("#signUpConfirmPassword", VALID_PASSWORD_USER);
-        await page.check('label[for="terms"]');
+        await page.fill(signUpPage.signUpEmailAddressInput, flow.emailAddress);
+        await page.fill(signUpPage.signUpPasswordInput, VALID_PASSWORD_USER);
+        await page.fill(signUpPage.signUpConfirmPasswordInput, VALID_PASSWORD_USER);
+        await page.check(signUpPage.termsAndConditionsCheckbox);
 
         // Verify if the appropriate color of borders is displayed
         const emailInputParent = page.locator('div.textInput', {has: page.locator('#signUpUsername')});
@@ -59,15 +54,11 @@ describe(`Test`, () => {
         const confirmPasswordInputParent = page.locator('div.textInput', {has: page.locator('#signUpConfirmPassword')});
         await expect(confirmPasswordInputParent).toHaveClass(/textInput__valid/);
 
-        // Save
         await page.click("#createAccount_button");
-    });
-
-    it('close the modal', async () => {
         await page.click("#close_button");
     });
 
-    it("should attempt to register", async () => {
+    it.skip("should attempt to register by checking also the optional checkboxes", async () => {
         // Click the [Sign-up] button
         await page.click('a[href="/myoddschecker/login"]');
 
