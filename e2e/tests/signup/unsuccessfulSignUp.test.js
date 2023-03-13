@@ -26,19 +26,19 @@ describe(`Test`, () => {
         return browser.close();
     });
 
-    it.skip("should navigate to base URL", async () => {
+    it("should navigate to base URL", async () => {
         await page.goto(BASE_URL);
     });
 
-    it.skip("should accept the cookies", async() => {
+    it("should accept the cookies", async() => {
         await page.click(".CookieBannerAcceptButton_c1mxe743");
     });
 
-    it.skip("should close the advertisement modal", async() => {
+    it("should close the advertisement modal", async() => {
         await page.getByRole('button', { name: 'Close Offers Modal' }).click();
     });
 
-    it.skip("should open the sign up modal", async () => {
+    it("should open the sign up modal", async () => {
         // Click the [Sign-up] button
         await page.click('a[href="/myoddschecker/login"]');
         // Click the Create an account url
@@ -49,7 +49,7 @@ describe(`Test`, () => {
         await expect(page.locator("#signUpUsername")).toBeVisible();
     });
 
-    it.skip("should type a different password in the confirm field and verify error message", async () => {
+    it("should type a different password in the confirm field and verify error message", async () => {
         // Registration info
         await page.fill("#signUpUsername", flow.emailAddress);
         await page.fill("#signUpPassword", VALID_PASSWORD_USER);
@@ -69,7 +69,7 @@ describe(`Test`, () => {
         await expect(confirmPasswordInputParent).toHaveClass(/textInput__invalid/);
     });
 
-    it.skip("should attempt to register without checking the checkbox for the terms", async () => {
+    it("should attempt to register without checking the checkbox for the terms", async () => {
         // Registration info
         await page.fill("#signUpUsername", flow.emailAddress);
         await page.fill("#signUpPassword", VALID_PASSWORD_USER);
@@ -83,7 +83,7 @@ describe(`Test`, () => {
         await expect(page.locator("#tAndCsErrorMessage")).toHaveText("Please accept the T&Cs and Privacy Policy");
     });
 
-    it.skip('close the modal', async () => {
+    it('close the modal', async () => {
         await page.click("#close_button");
     });
 });

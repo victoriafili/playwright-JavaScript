@@ -58,7 +58,7 @@ describe(`Successful Sign Up Scenarios`, () => {
         await page.click("#close_button");
     });
 
-    it.skip("should attempt to register by checking also the optional checkboxes", async () => {
+    it("should attempt to register by checking also the optional checkboxes", async () => {
         // Click the [Sign-up] button
         await page.click('a[href="/myoddschecker/login"]');
 
