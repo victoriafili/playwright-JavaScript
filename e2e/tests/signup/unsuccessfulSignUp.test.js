@@ -6,12 +6,12 @@ const {
     EMAIL_ADDRESS_PREFIX,
     VALID_PASSWORD_USER,
     CONFIRM_PASSWORD_USER,
-  } = require("./constants");
+  } = require("../../constants");
 
 const flow = {
     emailAddress: EMAIL_ADDRESS_PREFIX + faker.internet.email()
 }
-  
+
 describe(`Test`, () => {
     let browser, context, page
 
@@ -48,7 +48,7 @@ describe(`Test`, () => {
         // Check if the sign-up modal is displayed
         await expect(page.locator("#signUpUsername")).toBeVisible();
     });
-    
+
     it("should type a different password in the confirm field and verify error message", async () => {
         // Registration info
         await page.fill("#signUpUsername", flow.emailAddress);
