@@ -1,24 +1,37 @@
 const { chromium } = require('playwright');
 const {expect} = require('@playwright/test');
 const { faker } = require("@faker-js/faker");
+
 const {
-    BASE_URL,
     EMAIL_ADDRESS_PREFIX,
     VALID_PASSWORD_USER,
     CONFIRM_PASSWORD_USER,
   } = require("../../constants");
+
+const SignUpPage = require('../../pageObjects/SignUp.page');
+const HomePage = require('../../pageObjects/Home.page');
 
 const flow = {
     emailAddress: EMAIL_ADDRESS_PREFIX + faker.internet.email()
 }
 
 describe(`Test`, () => {
-    let browser, context, page
+    let browser, context, page;
+    let signUpPage = null;
+    let homePage = null;
 
     beforeAll(async() => {
-        browser = await chromium.launch({headless:false});
+        browser = await chromium.launch({
+            headless:false, 
+            logger: {
+                isEnabled: (name, severity) => true,
+                log: (name, severity, message, args) => console.log(`${name} ${message}`)
+            }
+        });
         context = await browser.newContext();
         page = await context.newPage();
+        signUpPage = new SignUpPage(page);
+        homePage = new HomePage(page);
     });
 
     afterAll(async() => {
@@ -26,64 +39,50 @@ describe(`Test`, () => {
         return browser.close();
     });
 
-    it("should navigate to base URL", async () => {
-        await page.goto(BASE_URL);
-    });
-
-    it("should accept the cookies", async() => {
-        await page.click(".CookieBannerAcceptButton_c1mxe743");
-    });
-
-    it("should close the advertisement modal", async() => {
-        await page.getByRole('button', { name: 'Close Offers Modal' }).click();
-    });
-
     it("should open the sign up modal", async () => {
+        await homePage.navigateToBaseUrl();
+        await page.click(homePage.cookieBannerOKButton);
+        await homePage.closeOffersModal();
+
         // Click the [Sign-up] button
-        await page.click('a[href="/myoddschecker/login"]');
-        // Click the Create an account url
-        await page.getByText('Create an account').click();
-        //await expect(page.getByTitle('Sign up')).toHaveText('Sign up');
+        await page.click(homePage.signUpButton);
 
         // Check if the sign-up modal is displayed
-        await expect(page.locator("#signUpUsername")).toBeVisible();
+        await expect(signUpPage.emailAddressErrorMessage).toBeVisible();
     });
 
     it("should type a different password in the confirm field and verify error message", async () => {
         // Registration info
-        await page.fill("#signUpUsername", flow.emailAddress);
-        await page.fill("#signUpPassword", VALID_PASSWORD_USER);
-        await page.fill("#signUpConfirmPassword", CONFIRM_PASSWORD_USER);
-        await page.check("label[for=marketing]");
+        await page.fill(signUpPage.signUpEmailAddressInput, flow.emailAddress);
+        await page.fill(signUpPage.signUpPasswordInput, VALID_PASSWORD_USER);
+        await page.fill(signUpPage.signUpConfirmPasswordInput, CONFIRM_PASSWORD_USER);
+        await page.check(signUpPage.exclusiveTipsAndOffers);
 
-        await page.click("#createAccount_button");
+        // Create the account
+        await page.click(signUpPage.signUpCreateAccountButton);
 
         // Verify error message
-        await expect(page.locator("#errorMessage")).toHaveText("Passwords do not match");
+        await expect(signUpPage.errorMessage).toHaveText(/Passwords do not match/);
 
         // Verify if the appropriate color of borders is displayed
-        const passwordInputParent = page.locator('div.textInput', {has: page.locator('#signUpPassword')});
-        await expect(passwordInputParent).toHaveClass(/textInput__valid/);
-
-        const confirmPasswordInputParent = page.locator('div.textInput', {has: page.locator('#signUpConfirmPassword')});
-        await expect(confirmPasswordInputParent).toHaveClass(/textInput__invalid/);
+        await expect(signUpPage.passwordInputParent).toHaveClass(/textInput__valid/);
+        await expect(signUpPage.confirmPasswordInputParent).toHaveClass(/textInput__invalid/);
     });
 
     it("should attempt to register without checking the checkbox for the terms", async () => {
         // Registration info
-        await page.fill("#signUpUsername", flow.emailAddress);
-        await page.fill("#signUpPassword", VALID_PASSWORD_USER);
-        await page.fill("#signUpConfirmPassword", VALID_PASSWORD_USER);
-        await page.check('label[for="marketing"]');
+        await page.fill(signUpPage.signUpEmailAddressInput, flow.emailAddress);
+        await page.fill(signUpPage.signUpPasswordInput, VALID_PASSWORD_USER);
+        await page.fill(signUpPage.signUpConfirmPasswordInput, VALID_PASSWORD_USER);
+        await page.check(signUpPage.exclusiveTipsAndOffers);
 
-        // Save
-        await page.click("#createAccount_button");
+        // Create the account
+        await page.click(signUpPage.signUpCreateAccountButton);
 
         // Verify the warning message
-        await expect(page.locator("#tAndCsErrorMessage")).toHaveText("Please accept the T&Cs and Privacy Policy");
-    });
+        await expect(signUpPage.tAndCsErrorMessage).toHaveText("Please accept the T&Cs and Privacy Policy");
 
-    it('close the modal', async () => {
-        await page.click("#close_button");
+        // Close
+        await page.click(signUpPage.signUpCloseButton);
     });
 });

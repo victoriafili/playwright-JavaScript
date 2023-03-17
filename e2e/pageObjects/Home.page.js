@@ -4,6 +4,7 @@ class HomePage extends BasePage {
     constructor(page) {
         super(page);
         this.cookieBannerOKButton = '.CookieBannerAcceptButton_c1mxe743';
+        this.signUpButton = 'a[class^=sign-up-desktop]';
     }
 
     async navigateToBaseUrl(){
