@@ -1,4 +1,4 @@
-const {BASE_URL} = require("../constants");
+const { BASE_URL } = require("../constants");
 
 class BasePage{
     constructor(page) {
