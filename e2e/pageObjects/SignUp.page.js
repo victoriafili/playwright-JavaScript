@@ -13,9 +13,9 @@ class SignUpPage extends BasePage {
         this.confirmPasswordInputParent = page.locator('div.textInput', {has: this.page.locator('#signUpConfirmPassword')});
         this.signUpCreateAccountButton = '#createAccount_button';
         this.signUpCloseButton = '#close_button';
-        this.emailAddressErrorMessage = page.locator('#signUpUsername');
-        this.errorMessage = page.locator('#errorMessage');
-        this.tAndCsErrorMessage = page.locator('#tAndCsErrorMessage');
+        this.emailAddress = page.locator('#signUpUsername');
+        this.errorMsg = page.locator('#errorMessage');
+        this.tAndCsErrorMsg = page.locator('#tAndCsErrorMessage');
     }
 }
 
