@@ -10,6 +10,7 @@ const {
 
 const SignUpPage = require('../../pageObjects/SignUp.page');
 const HomePage = require('../../pageObjects/Home.page');
+const dataModel = require('../../utils/dataModel');
 
 const flow = {
     emailAddress: EMAIL_ADDRESS_PREFIX + faker.internet.email()
@@ -39,7 +40,7 @@ describe(`Test`, () => {
         return browser.close();
     });
 
-    it("should open the sign up modal", async () => {
+    it("should open the sign up modal and verify password validation error message", async () => {
         await homePage.navigateToBaseUrl();
         await page.click(homePage.cookieBannerOKButton);
         await homePage.closeOffersModal();
@@ -48,10 +49,8 @@ describe(`Test`, () => {
         await page.click(homePage.signUpButton);
 
         // Check if the sign-up modal is displayed
-        await expect(signUpPage.emailAddressErrorMessage).toBeVisible();
-    });
+        await expect(signUpPage.emailAddress).toBeVisible();
 
-    it("should type a different password in the confirm field and verify error message", async () => {
         // Registration info
         await page.fill(signUpPage.signUpEmailAddressInput, flow.emailAddress);
         await page.fill(signUpPage.signUpPasswordInput, VALID_PASSWORD_USER);
@@ -61,15 +60,20 @@ describe(`Test`, () => {
         // Create the account
         await page.click(signUpPage.signUpCreateAccountButton);
 
-        // Verify error message
-        await expect(signUpPage.errorMessage).toHaveText(/Passwords do not match/);
+        // Verify password error message
+        await expect(signUpPage.errorMsg).toHaveText(dataModel.passwordErrorMsg);
 
         // Verify if the appropriate color of borders is displayed
         await expect(signUpPage.passwordInputParent).toHaveClass(/textInput__valid/);
         await expect(signUpPage.confirmPasswordInputParent).toHaveClass(/textInput__invalid/);
     });
 
-    it("should attempt to register without checking the checkbox for the terms", async () => {
+    it("should attempt to register without checking the terms checkbox and verify that page has no logs", async () => {
+        const logs = []
+        page.on("console", (message) => {
+            logs.push({ message, type: message.type() })
+        });
+
         // Registration info
         await page.fill(signUpPage.signUpEmailAddressInput, flow.emailAddress);
         await page.fill(signUpPage.signUpPasswordInput, VALID_PASSWORD_USER);
@@ -80,9 +84,12 @@ describe(`Test`, () => {
         await page.click(signUpPage.signUpCreateAccountButton);
 
         // Verify the warning message
-        await expect(signUpPage.tAndCsErrorMessage).toHaveText("Please accept the T&Cs and Privacy Policy");
+        await expect(signUpPage.tAndCsErrorMsg).toHaveText(dataModel.acceptTCsErrorMsg);
+
+        // Verify that there are no logs
+        expect(logs.length).toBe(0);
 
         // Close
         await page.click(signUpPage.signUpCloseButton);
-    });
+    });     
 });

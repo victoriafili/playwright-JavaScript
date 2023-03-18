@@ -20,13 +20,7 @@ describe(`Successful Sign Up Scenarios`, () => {
     let homePage = null;
 
     beforeAll(async() => {
-        browser = await chromium.launch({
-            headless:false,
-            logger: {
-                isEnabled: (name, severity) => true,
-                log: (name, severity, message, args) => console.log(`${name} ${message}`)
-            }
-        });
+        browser = await chromium.launch({headless:false});
         context = await browser.newContext();
         page = await context.newPage();
         signUpPage = new SignUpPage(page);
@@ -38,7 +32,7 @@ describe(`Successful Sign Up Scenarios`, () => {
         return browser.close();
     });
 
-    it("should attempt to register without checking the checkbox for the tips", async () => {
+    it("should attempt to register without checking the tips checkbox", async () => {
         await homePage.navigateToBaseUrl();
         await page.click(homePage.cookieBannerOKButton);
         await homePage.closeOffersModal();
@@ -62,7 +56,7 @@ describe(`Successful Sign Up Scenarios`, () => {
         await page.click(signUpPage.signUpCloseButton);
     });
 
-    it("should attempt to register by checking also the optional checkboxes", async () => {
+    it("should attempt to register", async () => {
         // Click the [Sign-up] button
         await page.click(homePage.signUpButton);
 
