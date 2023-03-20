@@ -1,4 +1,3 @@
-const { chromium } = require('playwright');
 const {expect} = require('@playwright/test');
 const { faker } = require("@faker-js/faker");
 
@@ -16,21 +15,11 @@ const flow = {
     emailAddress: EMAIL_ADDRESS_PREFIX + faker.internet.email()
 }
 
-describe(`Test`, () => {
-    let browser, context, page;
+describe("Unsuccessful Sign Up", () => {
     let signUpPage = null;
     let homePage = null;
 
     beforeAll(async() => {
-        browser = await chromium.launch({
-            headless:false, 
-            logger: {
-                isEnabled: (name, severity) => true,
-                log: (name, severity, message, args) => console.log(`${name} ${message}`)
-            }
-        });
-        context = await browser.newContext();
-        page = await context.newPage();
         signUpPage = new SignUpPage(page);
         homePage = new HomePage(page);
     });
