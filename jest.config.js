@@ -4,7 +4,7 @@ const config = {
     testEnvironmentOptions: {
         'jest-playwright': {
             launchOptions: {
-                headless: false,
+                headless: true,
                 // logger: {
                 //     isEnabled: (name, severity) => name === 'browser',
                 //     log: (name, severity, message, args) => console.log(`${name} ${message}`)
