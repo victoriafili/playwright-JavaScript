@@ -16,6 +16,9 @@ jobs:
           npm ci
       - name: Run tests
         run: xvfb-run --auto-servernum npm test
-      - name: Test Reporting
-        uses: phoenix-actions/test-reporting@v10
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-report
+          path: code-report.txt
 
