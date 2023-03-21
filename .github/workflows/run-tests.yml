@@ -3,7 +3,7 @@ on: 'push'
 jobs:
   tests_e2e:
     name: Run end-to-end tests
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3

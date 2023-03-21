@@ -1,4 +1,4 @@
-const {expect} = require('@playwright/test');
+const { expect, test } = require('@playwright/test');
 const { faker } = require("@faker-js/faker");
 
 const {
@@ -15,21 +15,18 @@ const flow = {
     emailAddress: EMAIL_ADDRESS_PREFIX + faker.internet.email()
 }
 
-describe("Unsuccessful Sign Up", () => {
+test.describe.serial("Unsuccessful Sign Up", () => {
+    let page;
     let signUpPage = null;
     let homePage = null;
 
-    beforeAll(async() => {
+    test.beforeAll(async({ browser }) => {
+        page = await browser.newPage();
         signUpPage = new SignUpPage(page);
         homePage = new HomePage(page);
     });
 
-    afterAll(async() => {
-        await page.close();
-        return browser.close();
-    });
-
-    it("should open the sign up modal and verify password validation error message", async () => {
+    test("should open the sign up modal and verify password validation error message", async () => {
         await homePage.navigateToBaseUrl();
         await page.click(homePage.cookieBannerOKButton);
         await homePage.closeOffersModal();
@@ -57,7 +54,7 @@ describe("Unsuccessful Sign Up", () => {
         await expect(signUpPage.confirmPasswordInputParent).toHaveClass(/textInput__invalid/);
     });
 
-    it("should attempt to register without checking the terms checkbox and verify that page has no logs", async () => {
+    test("should attempt to register without checking the terms checkbox and verify that page has no logs", async () => {
         const logs = []
         page.on("console", (message) => {
             logs.push({ message, type: message.type() })
