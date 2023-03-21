@@ -12,7 +12,6 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: |
-          sudo apt-get install xvfb
           npm ci
       - name: Run tests
         run: npm test
