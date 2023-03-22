@@ -16,17 +16,18 @@ const flow = {
 }
 
 test.describe.serial("Unsuccessful Sign Up", () => {
-    let page;
+    let context, page;
     let signUpPage = null;
     let homePage = null;
 
     test.beforeAll(async({ browser }) => {
-        page = await browser.newPage();
-        await browserContext.addCookies([
-            {name: 'hideCountryBanner', value: 'true', path: '/', domain: '.oddschecker.com'}
-        ]);
+        context = await browser.newContext()
+        page = await context.newPage();
         signUpPage = new SignUpPage(page);
         homePage = new HomePage(page);
+        await context.addCookies([
+            {name: 'hideCountryBanner', value: 'true', path: '/', domain: '.oddschecker.com'}
+        ]);
     });
 
     test("should open the sign up modal and verify password validation error message", async () => {
