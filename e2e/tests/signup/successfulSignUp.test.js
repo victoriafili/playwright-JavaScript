@@ -20,6 +20,9 @@ test.describe.serial("Successful Sign Up Scenarios", () => {
 
     test.beforeAll(async({ browser }) => {
         page = await browser.newPage();
+        await browserContext.addCookies([
+            {name: 'hideCountryBanner', value: 'true', path: '/', domain: '.oddschecker.com'}
+        ]);
         signUpPage = new SignUpPage(page);
         homePage = new HomePage(page);
     });
