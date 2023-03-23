@@ -1,5 +1,4 @@
-const { chromium } = require('playwright');
-const { expect } = require('@playwright/test');
+const { expect, test } = require('@playwright/test');
 const { faker } = require("@faker-js/faker");
 
 const {
@@ -14,25 +13,22 @@ const flow = {
     emailAddress: EMAIL_ADDRESS_PREFIX + faker.internet.email()
 }
 
-describe(`Successful Sign Up Scenarios`, () => {
-    let browser, context, page;
+test.describe.serial("Successful Sign Up Scenarios", () => {
+    let context, page;
     let signUpPage = null;
     let homePage = null;
 
-    beforeAll(async() => {
-        browser = await chromium.launch({headless:false});
-        context = await browser.newContext();
+    test.beforeAll(async({ browser }) => {
+        context = await browser.newContext()
         page = await context.newPage();
         signUpPage = new SignUpPage(page);
         homePage = new HomePage(page);
+        await context.addCookies([
+            {name: 'hideCountryBanner', value: 'true', path: '/', domain: '.oddschecker.com'}
+        ]);
     });
 
-    afterAll(async() => {
-        await page.close();
-        return browser.close();
-    });
-
-    it("should attempt to register without checking the tips checkbox", async () => {
+    test("should attempt to register without checking the tips checkbox", async () => {
         await homePage.navigateToBaseUrl();
         await page.click(homePage.cookieBannerOKButton);
         await homePage.closeOffersModal();
@@ -56,7 +52,7 @@ describe(`Successful Sign Up Scenarios`, () => {
         await page.click(signUpPage.signUpCloseButton);
     });
 
-    it("should attempt to register", async () => {
+    test("should attempt to register", async () => {
         // Click the [Sign-up] button
         await page.click(homePage.signUpButton);
 
